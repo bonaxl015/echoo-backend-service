@@ -3,6 +3,8 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import cors from 'cors';
 import xssClean from 'xss-clean';
+import authRoutes from './modules/auth/auth.routes';
+import { errorHandler } from './middlewares/error.middleware';
 
 const app: Express = express();
 
@@ -22,9 +24,10 @@ app.use(cors());
 // Prevent cross site scripting attacks
 app.use(xssClean());
 
-// test route
-app.use('/', (req, res) => {
-	res.send('hello test');
-});
+// API routes
+app.use('/api/v1/auth', authRoutes);
+
+// Register global error handler
+app.use(errorHandler);
 
 export default app;
