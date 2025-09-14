@@ -16,6 +16,7 @@ model User {
   bio               String?    @db.VarChar(255)
   resetToken        String?    @db.VarChar(255)
   resetTokenExpiry  DateTime?
+  posts             Post[]
   createdAt         DateTime   @default(now()) @db.Timestamp(6)
   updatedAt         DateTime   @updatedAt
 }
@@ -24,6 +25,15 @@ model RevokedToken {
   id                String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   token             String     @unique
   expiresAt         DateTime
+  createdAt         DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime   @updatedAt
+}
+
+model Post {
+  id                String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  content           String     @db.VarChar(2000)
+  author            User       @relation(fields: [authorId], references: [id])
+  authorId          String     @db.Uuid
   createdAt         DateTime   @default(now()) @db.Timestamp(6)
   updatedAt         DateTime   @updatedAt
 }
