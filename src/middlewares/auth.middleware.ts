@@ -3,7 +3,7 @@ import { STATUS_CODE } from '../enums/statusCodes';
 import { verifyToken } from '../utils/tokens';
 import prisma from '../config/db';
 
-interface ExtendedRequest extends Request {
+export interface AuthenticatedRequest extends Request {
 	userId: string;
 }
 
@@ -27,7 +27,7 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
 
 		const decoded = verifyToken(token) as { userId: string };
 
-		(req as ExtendedRequest).userId = decoded.userId;
+		(req as AuthenticatedRequest).userId = decoded.userId;
 
 		next();
 	} catch {
