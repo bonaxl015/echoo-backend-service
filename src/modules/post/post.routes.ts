@@ -9,6 +9,7 @@ import {
 	getPostByIdSchema,
 	updatePostSchema
 } from './post.validation';
+import { ValidationProperty } from '../../enums/validationProperty';
 
 const router = Router();
 
@@ -22,14 +23,14 @@ router.post(
 router.get(
 	'/get-all',
 	authenticateUser,
-	validateRequest(getAllPostSchema, 'query'),
+	validateRequest(getAllPostSchema, ValidationProperty.QUERY),
 	postController.getAll
 );
 
 router.get(
 	'/get',
 	authenticateUser,
-	validateRequest(getPostByIdSchema, 'query'),
+	validateRequest(getPostByIdSchema, ValidationProperty.QUERY),
 	postController.getById
 );
 
