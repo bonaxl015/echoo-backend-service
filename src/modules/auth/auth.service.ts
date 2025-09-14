@@ -24,7 +24,16 @@ export const registerUser = async ({ name, email, password }: IRegisterUserServi
 
 	const hashedPassword = await hashPassword(password);
 	const userCreated = await prisma.user.create({
-		data: { name, email, password: hashedPassword }
+		data: { name, email, password: hashedPassword },
+		select: {
+			id: true,
+			name: true,
+			email: true,
+			profilePhoto: true,
+			bio: true,
+			createdAt: true,
+			updatedAt: true
+		}
 	});
 
 	return { token: generateToken(userCreated.id), user: userCreated };
@@ -45,7 +54,19 @@ export const loginUser = async ({ email, password }: ILoginUserService) => {
 		throw new Error('Incorrect password');
 	}
 
-	return { token: generateToken(user.id), user };
+	const userData = {
+		id: user.id,
+		name: user.name,
+		email: user.email,
+		profilePhoto: user.profilePhoto,
+		bio: user.bio,
+		createdAt: user.createdAt,
+		updatedAt: user.updatedAt
+	};
+
+	user.password = '';
+
+	return { token: generateToken(user.id), user: userData };
 };
 
 export const forgotPassword = async ({ email }: IForgotPasswordService) => {
