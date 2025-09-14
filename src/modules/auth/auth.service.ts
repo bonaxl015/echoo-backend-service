@@ -5,10 +5,11 @@ import { generateToken } from '../../utils/tokens';
 import {
 	IForgotPasswordService,
 	ILoginUserService,
+	ILogoutUserService,
 	IRegisterUserService,
 	IResetPasswordService
 } from './auth.types';
-import { ONE_HOUR_IN_SECONDS } from '../../constants';
+import { MILLISECOND_TO_SECOND, ONE_HOUR_IN_SECONDS } from '../../constants';
 import { ENV } from '../../config/env';
 import { sendEmail } from '../../utils/sendEmail';
 
@@ -101,4 +102,17 @@ export const resetPassword = async ({ token, newPassword }: IResetPasswordServic
 	});
 
 	return { message: 'Password successfully reset' };
+};
+
+export const logoutUser = async ({ token, expiresIn }: ILogoutUserService) => {
+	const expiryDate = new Date(Date.now() + expiresIn * MILLISECOND_TO_SECOND);
+
+	await prisma.revokedToken.create({
+		data: {
+			token,
+			expiresAt: expiryDate
+		}
+	});
+
+	return { message: 'Logged out successfully' };
 };

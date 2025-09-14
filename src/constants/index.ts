@@ -1,1 +1,2 @@
 export const ONE_HOUR_IN_SECONDS = 3600000;
+export const MILLISECOND_TO_SECOND = 1000;

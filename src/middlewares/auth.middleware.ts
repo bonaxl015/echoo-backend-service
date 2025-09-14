@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { STATUS_CODE } from '../enums/statusCodes';
 import { verifyToken } from '../utils/tokens';
+import prisma from '../config/db';
 
 interface ExtendedRequest extends Request {
 	userId: string;
 }
 
-export const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
+export const authenticateUser = async (req: Request, res: Response, next: NextFunction) => {
 	const authHeader = req.headers.authorization;
 
 	if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -15,6 +16,15 @@ export const authenticateUser = (req: Request, res: Response, next: NextFunction
 
 	try {
 		const token = authHeader.split(' ')[1];
+
+		const isRevoked = await prisma.revokedToken.findUnique({
+			where: { token }
+		});
+
+		if (isRevoked) {
+			return res.status(STATUS_CODE.UNAUTHORIZED).json({ message: 'Token is revoked' });
+		}
+
 		const decoded = verifyToken(token) as { userId: string };
 
 		(req as ExtendedRequest).userId = decoded.userId;

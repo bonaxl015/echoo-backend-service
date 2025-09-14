@@ -17,3 +17,8 @@ export type IResetPasswordService = {
 	token: string;
 	newPassword: string;
 };
+
+export type ILogoutUserService = {
+	token: string;
+	expiresIn: number;
+};
