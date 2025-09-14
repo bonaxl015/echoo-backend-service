@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const getAllPostSchema = z.object({
 	pageNumber: z
 		.string()
-		.min(1, 'Must not be empty')
+		.min(1, 'Page number must not be empty')
 		.transform((val) => {
 			const num = Number(val);
 
@@ -14,7 +14,7 @@ export const getAllPostSchema = z.object({
 		.refine((val) => val > 0, { message: 'Page number must be positive' }),
 	pageSize: z
 		.string()
-		.min(1, 'Must not be empty')
+		.min(1, 'Page number must not be empty')
 		.transform((val) => {
 			const num = Number(val);
 
