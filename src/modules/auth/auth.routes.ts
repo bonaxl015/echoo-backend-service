@@ -7,11 +7,13 @@ import {
 	forgotPasswordSchema,
 	resetPasswordSchema
 } from './auth.validation';
+import { authenticateUser } from '../../middlewares/auth.middleware';
 
 const router = Router();
 
 router.post('/register', validateRequest(registerSchema), authController.register);
 router.post('/login', validateRequest(loginSchema), authController.login);
+router.post('/logout', authenticateUser, authController.logout);
 router.post(
 	'/forgot-password',
 	validateRequest(forgotPasswordSchema),
