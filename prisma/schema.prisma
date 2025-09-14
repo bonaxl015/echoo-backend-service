@@ -8,12 +8,14 @@ datasource db {
 }
 
 model User {
-  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String     @db.Char(100)
-  email         String     @db.VarChar(255) @unique
-  password      String     @db.VarChar(255)
-  profilePhoto  String?    @db.VarChar(255)
-  bio           String?    @db.VarChar(255)
-  createdAt     DateTime   @default(now()) @db.Timestamp(6)
-  updatedAt     DateTime   @updatedAt
+  id                String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String     @db.Char(100)
+  email             String     @db.VarChar(255) @unique
+  password          String     @db.VarChar(255)
+  profilePhoto      String?    @db.VarChar(255)
+  bio               String?    @db.VarChar(255)
+  resetToken        String?    @db.VarChar(255)
+  resetTokenExpiry  DateTime?
+  createdAt         DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime   @updatedAt
 }
