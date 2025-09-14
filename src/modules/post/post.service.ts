@@ -14,9 +14,14 @@ export const getAllPost = async ({ pageNumber, pageSize }: IGetAllPost) => {
 					id: true,
 					name: true
 				}
-			}
+			},
+			comments: true
 		}
 	});
+
+	if (!postList) {
+		throw new Error('Failed to get posts');
+	}
 
 	return { posts: postList };
 };
@@ -30,7 +35,8 @@ export const getPostById = async ({ id }: IGetPostById) => {
 					id: true,
 					name: true
 				}
-			}
+			},
+			comments: true
 		}
 	});
 
@@ -83,12 +89,16 @@ export const deletePost = async ({ id, authorId }: IDeletePost) => {
 		throw new Error('Post not found');
 	}
 
+	const deleteComments = await prisma.comment.deleteMany({
+		where: { postId: id }
+	});
+
 	const deletedPost = await prisma.post.delete({
 		where: { id, authorId }
 	});
 
-	if (!deletedPost) {
-		throw new Error('Post cannot be updated');
+	if (!deletedPost || !deleteComments) {
+		throw new Error('Post cannot be deleted');
 	}
 
 	return { deleted: true };

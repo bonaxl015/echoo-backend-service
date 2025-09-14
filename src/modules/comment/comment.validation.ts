@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-export const getAllPostSchema = z.object({
+export const getCommentsByPostSchema = z.object({
+	postId: z.uuid('Invalid post id'),
 	pageNumber: z
 		.string()
 		.min(1, 'Page number must not be empty')
@@ -25,19 +26,16 @@ export const getAllPostSchema = z.object({
 		.refine((val) => val > 0, { message: 'Page number must be positive' })
 });
 
-export const getPostByIdSchema = z.object({
-	id: z.uuid('Invalid post id')
+export const createCommentSchema = z.object({
+	postId: z.uuid('Invalid post id'),
+	content: z.string().min(1, 'Comment content cannot be empty')
 });
 
-export const createPostSchema = z.object({
-	content: z.string().min(1, 'Post content cannot be empty')
+export const updateCommentSchema = z.object({
+	id: z.uuid('Invalid comment id'),
+	content: z.string().min(1, 'Comment content cannot be empty')
 });
 
-export const updatePostSchema = z.object({
-	id: z.uuid('Invalid post id'),
-	content: z.string().min(1, 'Post content cannot be empty')
-});
-
-export const deletePostSchema = z.object({
-	id: z.uuid('Invalid post id')
+export const deleteCommentSchema = z.object({
+	id: z.uuid('Invalid comment id')
 });

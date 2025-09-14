@@ -17,7 +17,7 @@
 		"format": "prettier --write .",
 		"lint": "eslint 'src/**/*.{ts,js}' --quiet",
 		"lint:fix": "eslint 'src/**/*.{ts,js}' --fix",
-		"start": "node src/server.js",
+		"start": "node dist/server.js",
 		"test": "jest"
 	},
 	"jest": {
