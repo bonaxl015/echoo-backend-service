@@ -6,12 +6,14 @@ import { errorHandler } from '../../utils/errorHandler';
 
 export const getByPost = async (req: Request, res: Response, next: NextFunction) => {
 	const { postId, pageNumber, pageSize } = req.query;
+	const { userId } = req as AuthenticatedRequest;
 
 	const pageNumberToInt = Number(pageNumber);
 	const pageSizeToInt = Number(pageSize);
 
 	try {
 		const result = await commentService.getCommentsByPost({
+			authorId: userId,
 			postId: postId as string,
 			pageNumber: pageNumberToInt,
 			pageSize: pageSizeToInt

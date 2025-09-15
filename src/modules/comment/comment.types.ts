@@ -5,6 +5,7 @@ export type ICreateComment = {
 };
 
 export type IGetCommentByPost = {
+	authorId: string;
 	postId: string;
 	pageNumber: number;
 	pageSize: number;
