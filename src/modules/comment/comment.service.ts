@@ -1,8 +1,13 @@
 import prisma from '../../config/db';
 import { ICreateComment, IDeleteComment, IGetCommentByPost, IUpdateComment } from './comment.types';
 
-export const getCommentsByPost = async ({ postId, pageNumber, pageSize }: IGetCommentByPost) => {
-	const getCommentResult = await prisma.comment.findMany({
+export const getCommentsByPost = async ({
+	authorId,
+	postId,
+	pageNumber,
+	pageSize
+}: IGetCommentByPost) => {
+	const commentList = await prisma.comment.findMany({
 		where: { postId },
 		skip: (pageNumber - 1) * pageSize,
 		take: pageSize,
@@ -12,21 +17,48 @@ export const getCommentsByPost = async ({ postId, pageNumber, pageSize }: IGetCo
 		include: {
 			author: {
 				select: {
-					id: true,
 					name: true
+				}
+			},
+			likes: {
+				select: {
+					userId: true
+				}
+			},
+			_count: {
+				select: {
+					likes: true
 				}
 			}
 		}
 	});
 
-	if (!getCommentResult) {
+	if (!commentList) {
 		throw new Error('Failed to get comments');
 	}
 
-	return { comments: getCommentResult };
+	const returnCommentData = commentList.map((item) => ({
+		...item,
+		authorName: item.author.name,
+		likesCount: item._count.likes,
+		isLikedByCurrentUser: authorId ? item.likes.some((like) => like.userId === authorId) : false,
+		author: undefined,
+		_count: undefined,
+		likes: undefined
+	}));
+
+	return { comments: returnCommentData };
 };
 
 export const createComment = async ({ authorId, postId, content }: ICreateComment) => {
+	const findPost = await prisma.post.findUnique({
+		where: { id: postId }
+	});
+
+	if (!findPost) {
+		throw new Error('Post not found');
+	}
+
 	const createCommentResult = await prisma.comment.create({
 		data: { authorId, postId, content }
 	});
