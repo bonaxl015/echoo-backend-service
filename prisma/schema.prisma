@@ -18,6 +18,7 @@ model User {
   resetTokenExpiry  DateTime?
   posts             Post[]
   comments          Comment[]
+  likes             Like[]
   createdAt         DateTime   @default(now()) @db.Timestamp(6)
   updatedAt         DateTime   @updatedAt
 }
@@ -33,9 +34,10 @@ model RevokedToken {
 model Post {
   id                String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   content           String     @db.VarChar(2000)
-  author            User       @relation(fields: [authorId], references: [id])
+  author            User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId          String     @db.Uuid
   comments          Comment[]
+  likes             Like[]
   createdAt         DateTime   @default(now()) @db.Timestamp(6)
   updatedAt         DateTime   @updatedAt
 }
@@ -43,10 +45,23 @@ model Post {
 model Comment {
   id                String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   content           String     @db.VarChar(1500)
-  post              Post       @relation(fields: [postId], references: [id])
+  post              Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId            String     @db.Uuid
-  author            User       @relation(fields: [authorId], references: [id])
+  author            User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId          String     @db.Uuid
+  likes             Like[]
+  createdAt         DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime   @updatedAt
+}
+
+model Like {
+  id                String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String     @db.Uuid
+  post              Post?      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId            String?    @db.Uuid
+  comment           Comment?   @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId         String?    @db.Uuid
   createdAt         DateTime   @default(now()) @db.Timestamp(6)
   updatedAt         DateTime   @updatedAt
 }
