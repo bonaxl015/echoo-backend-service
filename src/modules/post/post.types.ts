@@ -1,10 +1,12 @@
 export type IGetAllPost = {
+	authorId: string;
 	pageNumber: number;
 	pageSize: number;
 };
 
 export type IGetPostById = {
 	id: string;
+	authorId: string;
 };
 
 export type ICreatePost = {

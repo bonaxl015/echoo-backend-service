@@ -6,12 +6,14 @@ import { errorHandler } from '../../utils/errorHandler';
 
 export const getAll = async (req: Request, res: Response, next: NextFunction) => {
 	const { pageNumber, pageSize } = req.query;
+	const { userId } = req as AuthenticatedRequest;
 
 	const pageNumberToInt = Number(pageNumber);
 	const pageSizeToInt = Number(pageSize);
 
 	try {
 		const result = await postService.getAllPost({
+			authorId: userId,
 			pageNumber: pageNumberToInt,
 			pageSize: pageSizeToInt
 		});
@@ -24,9 +26,10 @@ export const getAll = async (req: Request, res: Response, next: NextFunction) =>
 
 export const getById = async (req: Request, res: Response, next: NextFunction) => {
 	const { id } = req.query;
+	const { userId } = req as AuthenticatedRequest;
 
 	try {
-		const result = await postService.getPostById({ id: id as string });
+		const result = await postService.getPostById({ authorId: userId, id: id as string });
 
 		res.status(STATUS_CODE.SUCCESS).json(result);
 	} catch (error) {

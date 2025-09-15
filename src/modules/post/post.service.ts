@@ -1,7 +1,7 @@
 import prisma from '../../config/db';
 import { IGetAllPost, ICreatePost, IGetPostById, IUpdatePost, IDeletePost } from './post.types';
 
-export const getAllPost = async ({ pageNumber, pageSize }: IGetAllPost) => {
+export const getAllPost = async ({ authorId, pageNumber, pageSize }: IGetAllPost) => {
 	const postList = await prisma.post.findMany({
 		skip: (pageNumber - 1) * pageSize,
 		take: pageSize,
@@ -15,7 +15,17 @@ export const getAllPost = async ({ pageNumber, pageSize }: IGetAllPost) => {
 					name: true
 				}
 			},
-			comments: true
+			likes: {
+				select: {
+					userId: true
+				}
+			},
+			_count: {
+				select: {
+					comments: true,
+					likes: true
+				}
+			}
 		}
 	});
 
@@ -23,20 +33,40 @@ export const getAllPost = async ({ pageNumber, pageSize }: IGetAllPost) => {
 		throw new Error('Failed to get posts');
 	}
 
-	return { posts: postList };
+	const returnPostData = postList.map((item) => ({
+		...item,
+		authorName: item.author.name,
+		commentsCount: item._count.comments,
+		likesCount: item._count.likes,
+		isLikedByCurrentUser: authorId ? item.likes.some((like) => like.userId === authorId) : false,
+		_count: undefined,
+		likes: undefined,
+		author: undefined
+	}));
+
+	return { posts: returnPostData };
 };
 
-export const getPostById = async ({ id }: IGetPostById) => {
+export const getPostById = async ({ id, authorId }: IGetPostById) => {
 	const post = await prisma.post.findUnique({
 		where: { id },
 		include: {
 			author: {
 				select: {
-					id: true,
 					name: true
 				}
 			},
-			comments: true
+			likes: {
+				select: {
+					userId: true
+				}
+			},
+			_count: {
+				select: {
+					comments: true,
+					likes: true
+				}
+			}
 		}
 	});
 
@@ -44,7 +74,18 @@ export const getPostById = async ({ id }: IGetPostById) => {
 		throw new Error('Post not found');
 	}
 
-	return { post };
+	const returnPostData = {
+		...post,
+		authorName: post.author.name,
+		commentsCount: post._count.comments,
+		likesCount: post._count.likes,
+		isLikedByCurrentUser: authorId ? post.likes.some((like) => like.userId === authorId) : false,
+		_count: undefined,
+		likes: undefined,
+		author: undefined
+	};
+
+	return { post: returnPostData };
 };
 
 export const createPost = async ({ authorId, content }: ICreatePost) => {
@@ -89,15 +130,11 @@ export const deletePost = async ({ id, authorId }: IDeletePost) => {
 		throw new Error('Post not found');
 	}
 
-	const deleteComments = await prisma.comment.deleteMany({
-		where: { postId: id }
-	});
-
 	const deletedPost = await prisma.post.delete({
 		where: { id, authorId }
 	});
 
-	if (!deletedPost || !deleteComments) {
+	if (!deletedPost) {
 		throw new Error('Post cannot be deleted');
 	}
 
