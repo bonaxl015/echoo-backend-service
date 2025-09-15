@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    container_name: echoo-backend-services
+    restart: always
+    env_file:
+      - .env.production
+    ports:
+      - "5051:5051"
+    command: ["yarn", "start"]
