@@ -1,7 +1,7 @@
 -- CreateTable
 CREATE TABLE "public"."User" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "name" CHAR(100) NOT NULL,
+    "name" VARCHAR(100) NOT NULL,
     "email" VARCHAR(255) NOT NULL,
     "password" VARCHAR(255) NOT NULL,
     "profilePhoto" VARCHAR(255),

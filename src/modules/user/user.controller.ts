@@ -1,0 +1,95 @@
+import { Request, Response, NextFunction } from 'express';
+import * as userService from './user.service';
+import { STATUS_CODE } from '../../enums/statusCodes';
+import { errorHandler } from '../../utils/errorHandler';
+import { AuthenticatedRequest } from '../../middlewares/auth.middleware';
+import { removeFileFromPath } from '../../utils/removeFileFromPath';
+
+export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
+	const { pageNumber, pageSize } = req.query;
+
+	const pageNumberToInt = Number(pageNumber);
+	const pageSizeToInt = Number(pageSize);
+
+	try {
+		const result = await userService.getUsers({
+			pageNumber: pageNumberToInt,
+			pageSize: pageSizeToInt
+		});
+
+		res.status(STATUS_CODE.SUCCESS).json(result);
+	} catch (error) {
+		errorHandler(error, next);
+	}
+};
+
+export const getById = async (req: Request, res: Response, next: NextFunction) => {
+	const { id } = req.query;
+
+	try {
+		const result = await userService.getUserById({ id: id as string });
+
+		res.status(STATUS_CODE.SUCCESS).json(result);
+	} catch (error) {
+		errorHandler(error, next);
+	}
+};
+
+export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+	const { name, bio, profilePhoto } = req.body;
+	const { userId } = req as AuthenticatedRequest;
+
+	try {
+		const result = await userService.updateUser({
+			id: userId,
+			data: { name, bio, profilePhoto }
+		});
+
+		res.status(STATUS_CODE.SUCCESS).json(result);
+	} catch (error) {
+		errorHandler(error, next);
+	}
+};
+
+export const updateUserProfilePhoto = async (req: Request, res: Response, next: NextFunction) => {
+	const { userId, file } = req as AuthenticatedRequest;
+	const filename = `/uploads/${file?.filename}`;
+
+	if (!file) {
+		return res.status(400).json({ message: 'No file uploaded' });
+	}
+
+	try {
+		const currentUser = await userService.getUserById({ id: userId });
+
+		removeFileFromPath(currentUser.user.profilePhoto);
+
+		const result = await userService.updateUser({ id: userId, data: { profilePhoto: filename } });
+
+		res.status(STATUS_CODE.SUCCESS).json(result);
+	} catch (error) {
+		errorHandler(error, next);
+	}
+};
+
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+	const { id } = req.body;
+	const { userId } = req as AuthenticatedRequest;
+	const { authorization } = req.headers;
+
+	if (userId !== id) {
+		return res
+			.status(STATUS_CODE.FORBIDDEN)
+			.json({ message: 'You can only delete your own account' });
+	}
+
+	const token = authorization?.startsWith('Bearer ') ? authorization.split(' ')[1] : null;
+
+	try {
+		const result = await userService.deleteUser({ id, token });
+
+		res.status(STATUS_CODE.SUCCESS).json(result);
+	} catch (error) {
+		errorHandler(error, next);
+	}
+};
