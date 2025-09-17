@@ -5,6 +5,7 @@ import { errorHandler } from '../../utils/errorHandler';
 import { AuthenticatedRequest } from '../../middlewares/auth.middleware';
 import { removeFileFromPath } from '../../utils/removeFileFromPath';
 import { optimizeImage } from '../../utils/optimizeImage';
+import { getDefaultProfileUrl } from '../../utils/getDefaultProfileUrl';
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
 	const { pageNumber, pageSize } = req.query;
@@ -18,7 +19,17 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
 			pageSize: pageSizeToInt
 		});
 
-		res.status(STATUS_CODE.SUCCESS).json(result);
+		const returnResult = {
+			users: result.users.map((item) => ({
+				...item,
+				profilePhoto: item.profilePhotoPublicId
+					? optimizeImage(item.profilePhotoPublicId, 400)
+					: getDefaultProfileUrl(item.name, 400),
+				profilePhotoPublicId: undefined
+			}))
+		};
+
+		res.status(STATUS_CODE.SUCCESS).json(returnResult);
 	} catch (error) {
 		errorHandler(error, next);
 	}
@@ -34,7 +45,9 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
 		const returnData = {
 			user: {
 				...result.user,
-				profilePhoto: optimizedImageUrl ? optimizedImageUrl : result.user.profilePhoto,
+				profilePhoto: result.user.profilePhotoPublicId
+					? optimizedImageUrl
+					: getDefaultProfileUrl(result.user.name, 400),
 				profilePhotoPublicId: undefined
 			}
 		};
