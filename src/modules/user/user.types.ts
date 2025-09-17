@@ -11,6 +11,7 @@ type UpdateUserData = {
 	name: string;
 	bio: string;
 	profilePhoto: string;
+	profilePhotoPublicId: string;
 };
 
 export type IUpdateUser = {

@@ -4,6 +4,7 @@ import { STATUS_CODE } from '../../enums/statusCodes';
 import { errorHandler } from '../../utils/errorHandler';
 import { AuthenticatedRequest } from '../../middlewares/auth.middleware';
 import { removeFileFromPath } from '../../utils/removeFileFromPath';
+import { optimizeImage } from '../../utils/optimizeImage';
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
 	const { pageNumber, pageSize } = req.query;
@@ -29,7 +30,16 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
 	try {
 		const result = await userService.getUserById({ id: id as string });
 
-		res.status(STATUS_CODE.SUCCESS).json(result);
+		const optimizedImageUrl = optimizeImage(result.user.profilePhotoPublicId, 400);
+		const returnData = {
+			user: {
+				...result.user,
+				profilePhoto: optimizedImageUrl ? optimizedImageUrl : result.user.profilePhoto,
+				profilePhotoPublicId: undefined
+			}
+		};
+
+		res.status(STATUS_CODE.SUCCESS).json(returnData);
 	} catch (error) {
 		errorHandler(error, next);
 	}
@@ -53,7 +63,6 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 
 export const updateUserProfilePhoto = async (req: Request, res: Response, next: NextFunction) => {
 	const { userId, file } = req as AuthenticatedRequest;
-	const filename = `/uploads/${file?.filename}`;
 
 	if (!file) {
 		return res.status(400).json({ message: 'No file uploaded' });
@@ -62,9 +71,15 @@ export const updateUserProfilePhoto = async (req: Request, res: Response, next: 
 	try {
 		const currentUser = await userService.getUserById({ id: userId });
 
-		removeFileFromPath(currentUser.user.profilePhoto);
+		removeFileFromPath(currentUser.user.profilePhotoPublicId);
 
-		const result = await userService.updateUser({ id: userId, data: { profilePhoto: filename } });
+		const result = await userService.updateUser({
+			id: userId,
+			data: {
+				profilePhoto: file.path,
+				profilePhotoPublicId: file.filename
+			}
+		});
 
 		res.status(STATUS_CODE.SUCCESS).json(result);
 	} catch (error) {
