@@ -50,6 +50,9 @@ COPY --from=builder /app/prisma ./prisma
 # Regenerate prisma client after openssl installation
 RUN npx prisma generate
 
+# Prepare uploads folder
+RUN mkdir uploads && chown -R node:node uploads
+
 # Expose API port
 EXPOSE 5051
 
