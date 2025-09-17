@@ -10,5 +10,8 @@ export const ENV = {
 	TOKEN_EXPIRATION: Number(process.env.TOKEN_EXPIRATION) || 604800,
 	NODE_ENV: process.env.NODE_ENV || 'development',
 	GMAIL_USER: process.env.GMAIL_USER || '',
-	GMAIL_PASS: process.env.GMAIL_PASS || ''
+	GMAIL_PASS: process.env.GMAIL_PASS || '',
+	CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || '',
+	CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || '',
+	CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || ''
 };
