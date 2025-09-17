@@ -17,6 +17,7 @@ export const getUsers = async ({ pageNumber, pageSize }: IGetUsers) => {
 			name: true,
 			email: true,
 			profilePhoto: true,
+			profilePhotoPublicId: true,
 			bio: true,
 			createdAt: true,
 			updatedAt: true

@@ -13,9 +13,6 @@ import { errorHandler } from './middlewares/error.middleware';
 
 const app: Express = express();
 
-// Static path for image uploads
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
 // body parser into json
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
