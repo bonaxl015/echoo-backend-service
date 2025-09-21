@@ -1,17 +1,28 @@
 import { z } from 'zod';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 
-export const likePostSchema = z.object({
-	postId: z.uuid('Invalid post id')
-});
+extendZodWithOpenApi(z);
 
-export const likeCommentSchema = z.object({
-	commentId: z.uuid('Invalid post id')
-});
+export const likePostSchema = z
+	.object({
+		postId: z.uuid('Invalid post id')
+	})
+	.openapi({ description: 'Like a post' });
 
-export const unlikePostSchema = z.object({
-	postId: z.uuid('Invalid post id')
-});
+export const likeCommentSchema = z
+	.object({
+		commentId: z.uuid('Invalid post id')
+	})
+	.openapi({ description: 'Like a comment' });
 
-export const unlikeCommentSchema = z.object({
-	commentId: z.uuid('Invalid post id')
-});
+export const unlikePostSchema = z
+	.object({
+		postId: z.uuid('Invalid post id')
+	})
+	.openapi({ description: 'Unlike a post' });
+
+export const unlikeCommentSchema = z
+	.object({
+		commentId: z.uuid('Invalid post id')
+	})
+	.openapi({ description: 'Unlike a comment' });

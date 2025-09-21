@@ -1,43 +1,56 @@
 import { z } from 'zod';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 
-export const getAllPostSchema = z.object({
-	pageNumber: z
-		.string()
-		.min(1, 'Page number must not be empty')
-		.transform((val) => {
-			const num = Number(val);
+extendZodWithOpenApi(z);
 
-			if (isNaN(num)) throw new Error('Page number be a valid number');
+export const getAllPostSchema = z
+	.object({
+		pageNumber: z
+			.string()
+			.min(1, 'Page number must not be empty')
+			.transform((val) => {
+				const num = Number(val);
 
-			return num;
-		})
-		.refine((val) => val > 0, { message: 'Page number must be positive' }),
-	pageSize: z
-		.string()
-		.min(1, 'Page number must not be empty')
-		.transform((val) => {
-			const num = Number(val);
+				if (isNaN(num)) throw new Error('Page number be a valid number');
 
-			if (isNaN(num)) throw new Error('Page number be a valid number');
+				return num;
+			})
+			.refine((val) => val > 0, { message: 'Page number must be positive' }),
+		pageSize: z
+			.string()
+			.min(1, 'Page number must not be empty')
+			.transform((val) => {
+				const num = Number(val);
 
-			return num;
-		})
-		.refine((val) => val > 0, { message: 'Page number must be positive' })
-});
+				if (isNaN(num)) throw new Error('Page number be a valid number');
 
-export const getPostByIdSchema = z.object({
-	id: z.uuid('Invalid post id')
-});
+				return num;
+			})
+			.refine((val) => val > 0, { message: 'Page number must be positive' })
+	})
+	.openapi({ description: 'Get posts list in paging format' });
 
-export const createPostSchema = z.object({
-	content: z.string().min(1, 'Post content cannot be empty')
-});
+export const getPostByIdSchema = z
+	.object({
+		id: z.uuid('Invalid post id')
+	})
+	.openapi({ description: 'Get post based on postId' });
 
-export const updatePostSchema = z.object({
-	id: z.uuid('Invalid post id'),
-	content: z.string().min(1, 'Post content cannot be empty')
-});
+export const createPostSchema = z
+	.object({
+		content: z.string().min(1, 'Post content cannot be empty')
+	})
+	.openapi({ description: 'Create new post' });
 
-export const deletePostSchema = z.object({
-	id: z.uuid('Invalid post id')
-});
+export const updatePostSchema = z
+	.object({
+		id: z.uuid('Invalid post id'),
+		content: z.string().min(1, 'Post content cannot be empty')
+	})
+	.openapi({ description: 'Update post' });
+
+export const deletePostSchema = z
+	.object({
+		id: z.uuid('Invalid post id')
+	})
+	.openapi({ description: 'Delete post' });
