@@ -50,6 +50,10 @@ COPY --from=builder /app/prisma ./prisma
 # Regenerate prisma client after openssl installation
 RUN npx prisma generate
 
+# Health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:5051/health || exit 1
+
 # Expose API port
 EXPOSE 5051
 
