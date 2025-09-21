@@ -1,7 +1,7 @@
 # ----------------------------
 #   Builder stage
 # ----------------------------
-FROM node:20-slim AS builder
+FROM node:22-slim AS builder
 
 # Set working directory
 WORKDIR /app
@@ -25,7 +25,7 @@ RUN yarn build
 # ----------------------------
 #   Production stage
 # ----------------------------
-FROM node:20-slim AS production
+FROM node:22-slim AS production
 
 # Set environment
 ENV NODE_ENV=production
