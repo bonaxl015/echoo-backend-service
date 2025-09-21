@@ -70,6 +70,7 @@ export const updateUser = async ({ id, data }: IUpdateUser) => {
 			name: true,
 			email: true,
 			profilePhoto: true,
+			profilePhotoPublicId: true,
 			bio: true,
 			createdAt: true,
 			updatedAt: true
