@@ -3,13 +3,17 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import cors from 'cors';
 import xssClean from 'xss-clean';
-import path from 'path';
 import authRoutes from './modules/auth/auth.routes';
 import userRoutes from './modules/user/user.routes';
 import postRoutes from './modules/post/post.routes';
 import commentRoutes from './modules/comment/comment.routes';
 import likeRoutes from './modules/like/like.routes';
+import healthRoutes from './modules/health/health.routes';
 import { errorHandler } from './middlewares/error.middleware';
+import sanitizer from 'perfect-express-sanitizer';
+import cookieParser from 'cookie-parser';
+import expressRateLimit from 'express-rate-limit';
+import { TEN_MINUTES } from './constants';
 
 const app: Express = express();
 
@@ -17,8 +21,19 @@ const app: Express = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Cookie parser
+app.use(cookieParser());
+
 // added security for headers
 app.use(helmet());
+
+// Rate limiter
+app.use(
+	expressRateLimit({
+		windowMs: TEN_MINUTES,
+		max: 100
+	})
+);
 
 // Prevent http param pollution
 app.use(hpp());
@@ -28,6 +43,21 @@ app.use(cors());
 
 // Prevent cross site scripting attacks
 app.use(xssClean());
+
+// Sanitizer
+app.use(
+	sanitizer.clean(
+		{
+			sql: true,
+			sanitizeKeys: true
+		},
+		['/health'],
+		['body', 'query', 'params']
+	)
+);
+
+// Healthcheck
+app.use('/health', healthRoutes);
 
 // API routes
 app.use('/api/v1/auth', authRoutes);
