@@ -18,7 +18,7 @@ export const likePost = async ({ userId, postId }: ILikePost) => {
 		throw new Error('Failed to like post');
 	}
 
-	return { like: 'success' };
+	return { like: true };
 };
 
 export const likeComment = async ({ userId, commentId }: ILikeComment) => {
@@ -38,7 +38,7 @@ export const likeComment = async ({ userId, commentId }: ILikeComment) => {
 		throw new Error('Failed to like comment');
 	}
 
-	return { like: 'success' };
+	return { like: true };
 };
 
 export const unlikePost = async ({ postId, userId }: IUnlikePost) => {
@@ -58,7 +58,7 @@ export const unlikePost = async ({ postId, userId }: IUnlikePost) => {
 		throw new Error('Failed to unlike');
 	}
 
-	return { unlike: 'success' };
+	return { unlike: true };
 };
 
 export const unlikeComment = async ({ commentId, userId }: IUnlikeComment) => {
@@ -78,5 +78,5 @@ export const unlikeComment = async ({ commentId, userId }: IUnlikeComment) => {
 		throw new Error('Failed to unlike');
 	}
 
-	return { unlike: 'success' };
+	return { unlike: true };
 };

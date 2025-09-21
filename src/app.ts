@@ -14,6 +14,8 @@ import sanitizer from 'perfect-express-sanitizer';
 import cookieParser from 'cookie-parser';
 import expressRateLimit from 'express-rate-limit';
 import { TEN_MINUTES } from './constants';
+import swaggerUI from 'swagger-ui-express';
+import { swaggerSpec } from './docs/swagger';
 
 const app: Express = express();
 
@@ -65,6 +67,9 @@ app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/post', postRoutes);
 app.use('/api/v1/comment', commentRoutes);
 app.use('/api/v1/like', likeRoutes);
+
+// Documentation
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 // Register global error handler
 app.use(errorHandler);
