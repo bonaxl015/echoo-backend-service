@@ -27,6 +27,8 @@ router.get(
 	userController.getById
 );
 
+router.get('/info', authenticateUser, userController.getCurrentUserInfo);
+
 router.patch(
 	'/profile/update',
 	authenticateUser,
