@@ -17,7 +17,8 @@ export const getCommentsByPost = async ({
 		include: {
 			author: {
 				select: {
-					name: true
+					name: true,
+					profilePhoto: true
 				}
 			},
 			likes: {
@@ -40,6 +41,7 @@ export const getCommentsByPost = async ({
 	const returnCommentData = commentList.map((item) => ({
 		...item,
 		authorName: item.author.name,
+		authorProfilePhoto: item.author.profilePhoto,
 		likesCount: item._count.likes,
 		isLikedByCurrentUser: authorId ? item.likes.some((like) => like.userId === authorId) : false,
 		author: undefined,

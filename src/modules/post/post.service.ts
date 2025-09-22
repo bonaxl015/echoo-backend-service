@@ -12,7 +12,8 @@ export const getAllPost = async ({ authorId, pageNumber, pageSize }: IGetAllPost
 			author: {
 				select: {
 					id: true,
-					name: true
+					name: true,
+					profilePhoto: true
 				}
 			},
 			likes: {
@@ -36,6 +37,7 @@ export const getAllPost = async ({ authorId, pageNumber, pageSize }: IGetAllPost
 	const returnPostData = postList.map((item) => ({
 		...item,
 		authorName: item.author.name,
+		authorProfilePhoto: item.author.profilePhoto,
 		commentsCount: item._count.comments,
 		likesCount: item._count.likes,
 		isLikedByCurrentUser: authorId ? item.likes.some((like) => like.userId === authorId) : false,
@@ -53,7 +55,8 @@ export const getPostById = async ({ id, authorId }: IGetPostById) => {
 		include: {
 			author: {
 				select: {
-					name: true
+					name: true,
+					profilePhoto: true
 				}
 			},
 			likes: {
@@ -77,6 +80,7 @@ export const getPostById = async ({ id, authorId }: IGetPostById) => {
 	const returnPostData = {
 		...post,
 		authorName: post.author.name,
+		authorProfilePhoto: post.author.profilePhoto,
 		commentsCount: post._count.comments,
 		likesCount: post._count.likes,
 		isLikedByCurrentUser: authorId ? post.likes.some((like) => like.userId === authorId) : false,

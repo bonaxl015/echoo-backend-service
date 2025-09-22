@@ -5,6 +5,7 @@ extendZodWithOpenApi(z);
 
 const getCommentResponseSchema = z.object({
 	authorName: z.string().openapi({ description: 'User name of the comment creator' }),
+	authorProfilePhoto: z.url().openapi({ description: "URL of commenter's profile photo" }),
 	likesCount: z.number().openapi({ description: 'Number of likes in a comment' }),
 	isLikedByCurrentUser: z
 		.boolean()

@@ -5,6 +5,7 @@ extendZodWithOpenApi(z);
 
 const getPostResponseSchema = z.object({
 	authorName: z.string().openapi({ description: 'User name of the post creator' }),
+	authorProfilePhoto: z.url().openapi({ description: "URL of poster's profile photo" }),
 	commentsCount: z.number().openapi({ description: 'Number of comments in a post' }),
 	likesCount: z.number().openapi({ description: 'Number of likes in a post' }),
 	isLikedByCurrentUser: z
