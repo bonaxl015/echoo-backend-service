@@ -12,6 +12,7 @@ import {
 import { MILLISECOND_TO_SECOND, ONE_HOUR_IN_SECONDS } from '../../constants';
 import { ENV } from '../../config/env';
 import { sendEmail } from '../../utils/sendEmail';
+import { getDefaultProfileUrl } from '../../utils/getDefaultProfileUrl';
 
 export const registerUser = async ({ name, email, password }: IRegisterUserService) => {
 	const isUserExisting = await prisma.user.findUnique({
@@ -24,7 +25,12 @@ export const registerUser = async ({ name, email, password }: IRegisterUserServi
 
 	const hashedPassword = await hashPassword(password);
 	const userCreated = await prisma.user.create({
-		data: { name, email, password: hashedPassword }
+		data: {
+			name,
+			email,
+			password: hashedPassword,
+			profilePhoto: getDefaultProfileUrl(name, 400)
+		}
 	});
 
 	return { token: generateToken(userCreated.id) };
