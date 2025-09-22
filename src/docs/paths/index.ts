@@ -1,5 +1,11 @@
 export { registerPath, loginPath, forgotPasswordPath, resetPasswordPath, logoutPath } from './auth';
-export { getUsersPath, getUserByIdPath, updateUserProfilePath, deleteUserPath } from './user';
+export {
+	getUsersPath,
+	getUserByIdPath,
+	getCurrentUserInfo,
+	updateUserProfilePath,
+	deleteUserPath
+} from './user';
 export {
 	getAllPostPath,
 	getPostByIdPath,

@@ -58,6 +58,29 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
 	}
 };
 
+export const getCurrentUserInfo = async (req: Request, res: Response, next: NextFunction) => {
+	const { userId } = req as AuthenticatedRequest;
+
+	try {
+		const result = await userService.getUserById({ id: userId });
+
+		const optimizedImageUrl = optimizeImage(result.user.profilePhotoPublicId, 400);
+		const returnData = {
+			user: {
+				...result.user,
+				profilePhoto: result.user.profilePhotoPublicId
+					? optimizedImageUrl
+					: getDefaultProfileUrl(result.user.name, 400),
+				profilePhotoPublicId: undefined
+			}
+		};
+
+		res.status(STATUS_CODE.SUCCESS).json(returnData);
+	} catch (error) {
+		errorHandler(error, next);
+	}
+};
+
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
 	const { name, bio, profilePhoto } = req.body;
 	const { userId } = req as AuthenticatedRequest;
