@@ -12,7 +12,8 @@ import {
 	createPostResponseSchema,
 	updatePostResponseSchema,
 	deletePostResponseSchema,
-	postErrorResponseSchema
+	postErrorResponseSchema,
+	getPostsByUserResponseSchema
 } from '../responseSchema';
 
 export const getAllPostPath: RouteConfig = {
@@ -54,6 +55,29 @@ export const getPostByIdPath: RouteConfig = {
 		},
 		400: {
 			description: 'Failed to get post',
+			content: {
+				'application/json': { schema: postErrorResponseSchema }
+			}
+		}
+	}
+};
+
+export const getPostsByUserPath: RouteConfig = {
+	method: 'get',
+	path: '/api/v1/post/get-by-user',
+	tags: ['Post'],
+	request: {
+		query: getAllPostSchema
+	},
+	responses: {
+		200: {
+			description: 'Returns post list created by user',
+			content: {
+				'application/json': { schema: getPostsByUserResponseSchema }
+			}
+		},
+		400: {
+			description: 'Failed to get post list',
 			content: {
 				'application/json': { schema: postErrorResponseSchema }
 			}

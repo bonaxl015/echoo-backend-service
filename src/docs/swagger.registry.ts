@@ -8,6 +8,7 @@ import {
 	logoutPath,
 	getAllPostPath,
 	getPostByIdPath,
+	getPostsByUserPath,
 	createPostPath,
 	updatePostPath,
 	deletePostPath,
@@ -51,6 +52,7 @@ registry.registerPath(deleteUserPath);
 // Post endpoint paths
 registry.registerPath(getAllPostPath);
 registry.registerPath(getPostByIdPath);
+registry.registerPath(getPostsByUserPath);
 registry.registerPath(createPostPath);
 registry.registerPath(updatePostPath);
 registry.registerPath(deletePostPath);
