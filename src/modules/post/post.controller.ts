@@ -37,6 +37,26 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
 	}
 };
 
+export const getPostByUserId = async (req: Request, res: Response, next: NextFunction) => {
+	const { pageNumber, pageSize } = req.query;
+	const { userId } = req as AuthenticatedRequest;
+
+	const pageNumberToInt = Number(pageNumber);
+	const pageSizeToInt = Number(pageSize);
+
+	try {
+		const result = await postService.getPostByUserId({
+			authorId: userId,
+			pageNumber: pageNumberToInt,
+			pageSize: pageSizeToInt
+		});
+
+		res.status(STATUS_CODE.SUCCESS).json(result);
+	} catch (error) {
+		errorHandler(error, next);
+	}
+};
+
 export const createPost = async (req: Request, res: Response, next: NextFunction) => {
 	const { userId } = req as AuthenticatedRequest;
 	const { content } = req.body;

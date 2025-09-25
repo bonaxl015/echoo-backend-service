@@ -34,6 +34,10 @@ export const getPostByIdResponseSchema = z.object({
 	post: getPostResponseSchema
 });
 
+export const getPostsByUserResponseSchema = z.object({
+	posts: getPostResponseSchema.array()
+});
+
 export const createPostResponseSchema = z.object({
 	post: databasePostResponseSchema
 });

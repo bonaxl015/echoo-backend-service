@@ -9,6 +9,7 @@ export {
 export {
 	getAllPostPath,
 	getPostByIdPath,
+	getPostsByUserPath,
 	createPostPath,
 	updatePostPath,
 	deletePostPath

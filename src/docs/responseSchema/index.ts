@@ -18,6 +18,7 @@ export {
 export {
 	getAllPostResponseSchema,
 	getPostByIdResponseSchema,
+	getPostsByUserResponseSchema,
 	createPostResponseSchema,
 	updatePostResponseSchema,
 	deletePostResponseSchema,

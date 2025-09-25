@@ -9,6 +9,8 @@ export type IGetPostById = {
 	authorId: string;
 };
 
+export type IGetPostByUser = IGetAllPost;
+
 export type ICreatePost = {
 	authorId: string;
 	content: string;

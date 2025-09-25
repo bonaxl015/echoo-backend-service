@@ -1,5 +1,12 @@
 import prisma from '../../config/db';
-import { IGetAllPost, ICreatePost, IGetPostById, IUpdatePost, IDeletePost } from './post.types';
+import {
+	IGetAllPost,
+	ICreatePost,
+	IGetPostById,
+	IUpdatePost,
+	IDeletePost,
+	IGetPostByUser
+} from './post.types';
 
 export const getAllPost = async ({ authorId, pageNumber, pageSize }: IGetAllPost) => {
 	const postList = await prisma.post.findMany({
@@ -36,6 +43,7 @@ export const getAllPost = async ({ authorId, pageNumber, pageSize }: IGetAllPost
 
 	const returnPostData = postList.map((item) => ({
 		...item,
+		authorId: item.author.id,
 		authorName: item.author.name,
 		authorProfilePhoto: item.author.profilePhoto,
 		commentsCount: item._count.comments,
@@ -55,6 +63,7 @@ export const getPostById = async ({ id, authorId }: IGetPostById) => {
 		include: {
 			author: {
 				select: {
+					id: true,
 					name: true,
 					profilePhoto: true
 				}
@@ -79,6 +88,7 @@ export const getPostById = async ({ id, authorId }: IGetPostById) => {
 
 	const returnPostData = {
 		...post,
+		authorId: post.author.id,
 		authorName: post.author.name,
 		authorProfilePhoto: post.author.profilePhoto,
 		commentsCount: post._count.comments,
@@ -90,6 +100,56 @@ export const getPostById = async ({ id, authorId }: IGetPostById) => {
 	};
 
 	return { post: returnPostData };
+};
+
+export const getPostByUserId = async ({ authorId, pageNumber, pageSize }: IGetPostByUser) => {
+	const postList = await prisma.post.findMany({
+		where: { authorId },
+		skip: (pageNumber - 1) * pageSize,
+		take: pageSize,
+		orderBy: {
+			createdAt: 'desc'
+		},
+		include: {
+			author: {
+				select: {
+					id: true,
+					name: true,
+					profilePhoto: true
+				}
+			},
+			likes: {
+				select: {
+					userId: true
+				}
+			},
+			_count: {
+				select: {
+					comments: true,
+					likes: true
+				}
+			}
+		}
+	});
+
+	if (!postList) {
+		throw new Error('Failed to get posts');
+	}
+
+	const returnPostData = postList.map((item) => ({
+		...item,
+		authorId: item.author.id,
+		authorName: item.author.name,
+		authorProfilePhoto: item.author.profilePhoto,
+		commentsCount: item._count.comments,
+		likesCount: item._count.likes,
+		isLikedByCurrentUser: authorId ? item.likes.some((like) => like.userId === authorId) : false,
+		_count: undefined,
+		likes: undefined,
+		author: undefined
+	}));
+
+	return { posts: returnPostData };
 };
 
 export const createPost = async ({ authorId, content }: ICreatePost) => {
