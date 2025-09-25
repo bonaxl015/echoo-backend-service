@@ -34,6 +34,13 @@ router.get(
 	postController.getById
 );
 
+router.get(
+	'/get-by-user',
+	authenticateUser,
+	validateRequest(getAllPostSchema, ValidationProperty.QUERY),
+	postController.getPostByUserId
+);
+
 router.patch(
 	'/update',
 	authenticateUser,
