@@ -1,4 +1,5 @@
 import prisma from '../../config/db';
+import { invalidatePaginationCache } from '../../utils/redisCache';
 import { ICreateComment, IDeleteComment, IGetCommentByPost, IUpdateComment } from './comment.types';
 
 export const getCommentsByPost = async ({
@@ -71,10 +72,12 @@ export const createComment = async ({ authorId, postId, content }: ICreateCommen
 		throw new Error('Filed to create comment');
 	}
 
+	await invalidatePaginationCache(`comments:posts:${postId}`, 3);
+
 	return { comment: createCommentResult };
 };
 
-export const updateComment = async ({ authorId, id, content }: IUpdateComment) => {
+export const updateComment = async ({ authorId, id, content, postId }: IUpdateComment) => {
 	const findCommentResult = await prisma.comment.findUnique({
 		where: { id, authorId }
 	});
@@ -92,10 +95,12 @@ export const updateComment = async ({ authorId, id, content }: IUpdateComment) =
 		throw new Error('Failed to update comment');
 	}
 
+	await invalidatePaginationCache(`comments:posts:${postId}`, 3);
+
 	return { comment: updateCommentResult };
 };
 
-export const deleteComment = async ({ id, authorId }: IDeleteComment) => {
+export const deleteComment = async ({ id, authorId, postId }: IDeleteComment) => {
 	const findCommentResult = await prisma.comment.findUnique({
 		where: { id, authorId }
 	});
@@ -111,6 +116,8 @@ export const deleteComment = async ({ id, authorId }: IDeleteComment) => {
 	if (!deleteCommentResult) {
 		throw new Error('Failed to delete comment');
 	}
+
+	await invalidatePaginationCache(`comments:posts:${postId}`, 3);
 
 	return { delete: true };
 };

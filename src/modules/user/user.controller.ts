@@ -6,6 +6,8 @@ import { AuthenticatedRequest } from '../../middlewares/auth.middleware';
 import { removeFileFromPath } from '../../utils/removeFileFromPath';
 import { optimizeImage } from '../../utils/optimizeImage';
 import { getDefaultProfileUrl } from '../../utils/getDefaultProfileUrl';
+import { buildPageCacheKey, getCache, setCache } from '../../utils/redisCache';
+import { USER_TTL } from '../../constants';
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
 	const { pageNumber, pageSize } = req.query;
@@ -13,7 +15,15 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
 	const pageNumberToInt = Number(pageNumber);
 	const pageSizeToInt = Number(pageSize);
 
+	const cacheKey = buildPageCacheKey('users', pageNumberToInt, pageSizeToInt);
+
 	try {
+		const cachedData = await getCache(cacheKey);
+
+		if (cachedData) {
+			return res.status(STATUS_CODE.SUCCESS).json(cachedData);
+		}
+
 		const result = await userService.getUsers({
 			pageNumber: pageNumberToInt,
 			pageSize: pageSizeToInt
@@ -28,6 +38,8 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
 				profilePhotoPublicId: undefined
 			}))
 		};
+
+		await setCache(cacheKey, returnResult, USER_TTL);
 
 		res.status(STATUS_CODE.SUCCESS).json(returnResult);
 	} catch (error) {

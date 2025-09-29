@@ -4,6 +4,7 @@ import { AppError } from '../../middlewares/error.middleware';
 import { verifyToken } from '../../utils/tokens';
 import { IDeleteUser, IGetUsers, IGetUserById, IUpdateUser } from './user.types';
 import { MILLISECOND_TO_SECOND } from '../../constants';
+import { invalidatePaginationCache } from '../../utils/redisCache';
 
 export const getUsers = async ({ pageNumber, pageSize }: IGetUsers) => {
 	const findUser = await prisma.user.findMany({
@@ -81,6 +82,8 @@ export const updateUser = async ({ id, data }: IUpdateUser) => {
 		throw new Error('Failed to update user');
 	}
 
+	await invalidatePaginationCache('users', 3);
+
 	return { user: updateUserResult };
 };
 
@@ -124,6 +127,8 @@ export const deleteUser = async ({ id, token }: IDeleteUser) => {
 	if (!deleteUserResult) {
 		throw new Error('Failed to delete user');
 	}
+
+	await invalidatePaginationCache('users', 3);
 
 	return { delete: true };
 };

@@ -1,4 +1,5 @@
 import prisma from '../../config/db';
+import { invalidatePaginationCache } from '../../utils/redisCache';
 import {
 	IGetAllPost,
 	ICreatePost,
@@ -161,6 +162,8 @@ export const createPost = async ({ authorId, content }: ICreatePost) => {
 		throw new Error('Failed to create post');
 	}
 
+	await invalidatePaginationCache('posts', 3);
+
 	return { post: postCreated };
 };
 
@@ -182,6 +185,8 @@ export const updatePost = async ({ id, authorId, content }: IUpdatePost) => {
 		throw new Error('Failed to update post');
 	}
 
+	await invalidatePaginationCache('posts', 3);
+
 	return { post: updatedPost };
 };
 
@@ -201,6 +206,8 @@ export const deletePost = async ({ id, authorId }: IDeletePost) => {
 	if (!deletedPost) {
 		throw new Error('Post cannot be deleted');
 	}
+
+	await invalidatePaginationCache('posts', 3);
 
 	return { deleted: true };
 };

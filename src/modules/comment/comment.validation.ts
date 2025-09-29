@@ -41,12 +41,14 @@ export const createCommentSchema = z
 export const updateCommentSchema = z
 	.object({
 		id: z.uuid('Invalid comment id'),
+		postId: z.uuid('Invalid post id'),
 		content: z.string().min(1, 'Comment content cannot be empty')
 	})
 	.openapi({ description: 'Update comment' });
 
 export const deleteCommentSchema = z
 	.object({
-		id: z.uuid('Invalid comment id')
+		id: z.uuid('Invalid comment id'),
+		postId: z.uuid('Invalid post id')
 	})
 	.openapi({ description: 'Delete comment' });
