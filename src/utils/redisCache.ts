@@ -39,7 +39,7 @@ export const buildPageCacheKey = (
 	limit: number,
 	filter: string = ''
 ) => {
-	const base = `${entityLabel}:page:${page}:limit${limit}`;
+	const base = `${entityLabel}:page:${page}:limit:${limit}`;
 
 	return filter ? `${base}:filter:${filter}` : base;
 };
