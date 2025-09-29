@@ -3,6 +3,8 @@ import * as postService from './post.service';
 import { AuthenticatedRequest } from '../../middlewares/auth.middleware';
 import { STATUS_CODE } from '../../enums/statusCodes';
 import { errorHandler } from '../../utils/errorHandler';
+import { buildPageCacheKey, getCache, setCache } from '../../utils/redisCache';
+import { POST_TTL } from '../../constants';
 
 export const getAll = async (req: Request, res: Response, next: NextFunction) => {
 	const { pageNumber, pageSize } = req.query;
@@ -11,12 +13,22 @@ export const getAll = async (req: Request, res: Response, next: NextFunction) =>
 	const pageNumberToInt = Number(pageNumber);
 	const pageSizeToInt = Number(pageSize);
 
+	const cacheKey = buildPageCacheKey('posts', pageNumberToInt, pageSizeToInt);
+
 	try {
+		const cachedData = await getCache(cacheKey);
+
+		if (cachedData) {
+			return res.status(STATUS_CODE.SUCCESS).json(cachedData);
+		}
+
 		const result = await postService.getAllPost({
 			authorId: userId,
 			pageNumber: pageNumberToInt,
 			pageSize: pageSizeToInt
 		});
+
+		await setCache(cacheKey, result, POST_TTL);
 
 		res.status(STATUS_CODE.SUCCESS).json(result);
 	} catch (error) {

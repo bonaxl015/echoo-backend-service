@@ -15,9 +15,11 @@ export type IUpdateComment = {
 	authorId: string;
 	id: string;
 	content: string;
+	postId: string;
 };
 
 export type IDeleteComment = {
 	authorId: string;
 	id: string;
+	postId: string;
 };
