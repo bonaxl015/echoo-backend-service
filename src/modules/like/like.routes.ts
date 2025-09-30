@@ -6,8 +6,11 @@ import {
 	likePostSchema,
 	likeCommentSchema,
 	unlikePostSchema,
-	unlikeCommentSchema
+	unlikeCommentSchema,
+	getPostLikeSchema,
+	getCommentLikeSchema
 } from './like.validation';
+import { ValidationProperty } from '../../enums/validationProperty';
 
 const router = Router();
 
@@ -32,6 +35,20 @@ router.delete(
 	authenticateUser,
 	validateRequest(unlikeCommentSchema),
 	likeController.unlikeComment
+);
+
+router.get(
+	'/get-post-likes',
+	authenticateUser,
+	validateRequest(getPostLikeSchema, ValidationProperty.QUERY),
+	likeController.getPostLikes
+);
+
+router.get(
+	'/get-comment-likes',
+	authenticateUser,
+	validateRequest(getCommentLikeSchema, ValidationProperty.QUERY),
+	likeController.getCommentLikes
 );
 
 export default router;

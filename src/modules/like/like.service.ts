@@ -1,5 +1,13 @@
 import prisma from '../../config/db';
-import { ILikeComment, ILikePost, IUnlikeComment, IUnlikePost } from './like.types';
+import { invalidatePaginationCache } from '../../utils/redisCache';
+import {
+	IGetCommentLikes,
+	IGetPostLikes,
+	ILikeComment,
+	ILikePost,
+	IUnlikeComment,
+	IUnlikePost
+} from './like.types';
 
 export const likePost = async ({ userId, postId }: ILikePost) => {
 	const existingLike = await prisma.like.findFirst({
@@ -17,6 +25,8 @@ export const likePost = async ({ userId, postId }: ILikePost) => {
 	if (!likeResult) {
 		throw new Error('Failed to like post');
 	}
+
+	await invalidatePaginationCache(`likes:posts:${postId}`, 3);
 
 	return { like: true };
 };
@@ -38,6 +48,8 @@ export const likeComment = async ({ userId, commentId }: ILikeComment) => {
 		throw new Error('Failed to like comment');
 	}
 
+	await invalidatePaginationCache(`likes:comments:${commentId}`, 3);
+
 	return { like: true };
 };
 
@@ -57,6 +69,8 @@ export const unlikePost = async ({ postId, userId }: IUnlikePost) => {
 	if (!unlikeResult) {
 		throw new Error('Failed to unlike');
 	}
+
+	await invalidatePaginationCache(`likes:posts:${postId}`, 3);
 
 	return { unlike: true };
 };
@@ -78,5 +92,71 @@ export const unlikeComment = async ({ commentId, userId }: IUnlikeComment) => {
 		throw new Error('Failed to unlike');
 	}
 
+	await invalidatePaginationCache(`likes:comments:${commentId}`, 3);
+
 	return { unlike: true };
+};
+
+export const getPostLikes = async ({ postId, pageNumber, pageSize }: IGetPostLikes) => {
+	const getPostLikeList = await prisma.like.findMany({
+		where: { postId },
+		skip: (pageNumber - 1) * pageSize,
+		take: pageSize,
+		orderBy: {
+			createdAt: 'desc'
+		},
+		include: {
+			user: {
+				select: {
+					name: true,
+					profilePhoto: true
+				}
+			}
+		}
+	});
+
+	if (!getPostLikeList) {
+		throw new Error('Unable to get likes list');
+	}
+
+	const returnData = getPostLikeList.map((item) => ({
+		...item,
+		userName: item.user.name,
+		userProfilePhoto: item.user.profilePhoto,
+		user: undefined
+	}));
+
+	return { likes: returnData };
+};
+
+export const getCommentLikes = async ({ commentId, pageNumber, pageSize }: IGetCommentLikes) => {
+	const getCommentLikeList = await prisma.like.findMany({
+		where: { commentId },
+		skip: (pageNumber - 1) * pageSize,
+		take: pageSize,
+		orderBy: {
+			createdAt: 'desc'
+		},
+		include: {
+			user: {
+				select: {
+					name: true,
+					profilePhoto: true
+				}
+			}
+		}
+	});
+
+	if (!getCommentLikeList) {
+		throw new Error('Unable to get likes list');
+	}
+
+	const returnData = getCommentLikeList.map((item) => ({
+		...item,
+		userName: item.user.name,
+		userProfilePhoto: item.user.profilePhoto,
+		user: undefined
+	}));
+
+	return { likes: returnData };
 };
