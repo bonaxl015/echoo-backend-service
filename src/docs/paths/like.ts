@@ -2,7 +2,9 @@ import {
 	likeCommentSchema,
 	unlikeCommentSchema,
 	likePostSchema,
-	unlikePostSchema
+	unlikePostSchema,
+	getPostLikeSchema,
+	getCommentLikeSchema
 } from '../../modules/like/like.validation';
 import { RouteConfig } from '@asteasolutions/zod-to-openapi';
 import {
@@ -10,7 +12,9 @@ import {
 	unlikeCommentResponseSchema,
 	likePostResponseSchema,
 	unlikePostResponseSchema,
-	likeErrorResponseSchema
+	likeErrorResponseSchema,
+	getPostLikeResponseSchema,
+	getCommentLikeResponseSchema
 } from '../responseSchema';
 
 export const likeCommentPath: RouteConfig = {
@@ -114,6 +118,52 @@ export const unlikePostPath: RouteConfig = {
 		},
 		400: {
 			description: 'Unlike post failed',
+			content: {
+				'application/json': { schema: likeErrorResponseSchema }
+			}
+		}
+	}
+};
+
+export const getPostLikesPath: RouteConfig = {
+	method: 'get',
+	path: '/api/v1/like/get-post-likes',
+	tags: ['Like'],
+	request: {
+		query: getPostLikeSchema
+	},
+	responses: {
+		200: {
+			description: 'Get post likes list success',
+			content: {
+				'application/json': { schema: getPostLikeResponseSchema }
+			}
+		},
+		400: {
+			description: 'Get post likes list failed',
+			content: {
+				'application/json': { schema: likeErrorResponseSchema }
+			}
+		}
+	}
+};
+
+export const getCommentLikesPath: RouteConfig = {
+	method: 'get',
+	path: '/api/v1/like/get-comment-likes',
+	tags: ['Like'],
+	request: {
+		query: getCommentLikeSchema
+	},
+	responses: {
+		200: {
+			description: 'Get comment likes list success',
+			content: {
+				'application/json': { schema: getCommentLikeResponseSchema }
+			}
+		},
+		400: {
+			description: 'Get comment likes list failed',
 			content: {
 				'application/json': { schema: likeErrorResponseSchema }
 			}

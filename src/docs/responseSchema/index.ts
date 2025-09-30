@@ -38,5 +38,7 @@ export {
 	unlikePostResponseSchema,
 	likeCommentResponseSchema,
 	unlikeCommentResponseSchema,
-	likeErrorResponseSchema
+	likeErrorResponseSchema,
+	getPostLikeResponseSchema,
+	getCommentLikeResponseSchema
 } from './like';
