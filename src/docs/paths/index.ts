@@ -20,4 +20,11 @@ export {
 	updateCommentPath,
 	deleteCommentPath
 } from './comment';
-export { likeCommentPath, likePostPath, unlikeCommentPath, unlikePostPath } from './like';
+export {
+	likeCommentPath,
+	likePostPath,
+	unlikeCommentPath,
+	unlikePostPath,
+	getPostLikesPath,
+	getCommentLikesPath
+} from './like';

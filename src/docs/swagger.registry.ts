@@ -24,7 +24,9 @@ import {
 	likeCommentPath,
 	likePostPath,
 	unlikeCommentPath,
-	unlikePostPath
+	unlikePostPath,
+	getPostLikesPath,
+	getCommentLikesPath
 } from './paths';
 
 export const registry = new OpenAPIRegistry();
@@ -68,3 +70,5 @@ registry.registerPath(likeCommentPath);
 registry.registerPath(likePostPath);
 registry.registerPath(unlikeCommentPath);
 registry.registerPath(unlikePostPath);
+registry.registerPath(getPostLikesPath);
+registry.registerPath(getCommentLikesPath);

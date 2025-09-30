@@ -17,3 +17,15 @@ export type IUnlikeComment = {
 	commentId: string;
 	userId: string;
 };
+
+export type IGetPostLikes = {
+	postId: string;
+	pageNumber: number;
+	pageSize: number;
+};
+
+export type IGetCommentLikes = {
+	commentId: string;
+	pageNumber: number;
+	pageSize: number;
+};
