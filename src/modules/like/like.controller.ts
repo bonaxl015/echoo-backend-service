@@ -21,10 +21,10 @@ export const likePost = async (req: Request, res: Response, next: NextFunction) 
 
 export const likeComment = async (req: Request, res: Response, next: NextFunction) => {
 	const { userId } = req as AuthenticatedRequest;
-	const { commentId } = req.body;
+	const { commentId, postId } = req.body;
 
 	try {
-		const result = await likeService.likeComment({ userId, commentId });
+		const result = await likeService.likeComment({ userId, commentId, postId });
 
 		res.status(STATUS_CODE.CREATED).json(result);
 	} catch (error) {
@@ -47,10 +47,10 @@ export const unlikePost = async (req: Request, res: Response, next: NextFunction
 
 export const unlikeComment = async (req: Request, res: Response, next: NextFunction) => {
 	const { userId } = req as AuthenticatedRequest;
-	const { commentId } = req.body;
+	const { commentId, postId } = req.body;
 
 	try {
-		const result = await likeService.unlikeComment({ commentId, userId });
+		const result = await likeService.unlikeComment({ commentId, userId, postId });
 
 		res.status(STATUS_CODE.SUCCESS).json(result);
 	} catch (error) {
