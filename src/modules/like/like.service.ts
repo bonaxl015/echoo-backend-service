@@ -27,11 +27,12 @@ export const likePost = async ({ userId, postId }: ILikePost) => {
 	}
 
 	await invalidatePaginationCache(`likes:posts:${postId}`, 3);
+	await invalidatePaginationCache('posts', 3);
 
 	return { like: true };
 };
 
-export const likeComment = async ({ userId, commentId }: ILikeComment) => {
+export const likeComment = async ({ userId, commentId, postId }: ILikeComment) => {
 	const existingLike = await prisma.like.findFirst({
 		where: { userId, commentId }
 	});
@@ -49,6 +50,7 @@ export const likeComment = async ({ userId, commentId }: ILikeComment) => {
 	}
 
 	await invalidatePaginationCache(`likes:comments:${commentId}`, 3);
+	await invalidatePaginationCache(`comments:posts:${postId}`, 3);
 
 	return { like: true };
 };
@@ -71,11 +73,12 @@ export const unlikePost = async ({ postId, userId }: IUnlikePost) => {
 	}
 
 	await invalidatePaginationCache(`likes:posts:${postId}`, 3);
+	await invalidatePaginationCache('posts', 3);
 
 	return { unlike: true };
 };
 
-export const unlikeComment = async ({ commentId, userId }: IUnlikeComment) => {
+export const unlikeComment = async ({ commentId, userId, postId }: IUnlikeComment) => {
 	const existingLike = await prisma.like.findFirst({
 		where: { userId, commentId }
 	});
@@ -93,6 +96,7 @@ export const unlikeComment = async ({ commentId, userId }: IUnlikeComment) => {
 	}
 
 	await invalidatePaginationCache(`likes:comments:${commentId}`, 3);
+	await invalidatePaginationCache(`comments:posts:${postId}`, 3);
 
 	return { unlike: true };
 };

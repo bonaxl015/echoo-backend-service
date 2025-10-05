@@ -11,7 +11,8 @@ export const likePostSchema = z
 
 export const likeCommentSchema = z
 	.object({
-		commentId: z.uuid('Invalid comment id')
+		commentId: z.uuid('Invalid comment id'),
+		postId: z.uuid('Invalid post id')
 	})
 	.openapi({ description: 'Like a comment' });
 
@@ -23,7 +24,8 @@ export const unlikePostSchema = z
 
 export const unlikeCommentSchema = z
 	.object({
-		commentId: z.uuid('Invalid comment id')
+		commentId: z.uuid('Invalid comment id'),
+		postId: z.uuid('Invalid post id')
 	})
 	.openapi({ description: 'Unlike a comment' });
 

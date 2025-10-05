@@ -6,6 +6,7 @@ export type ILikePost = {
 export type ILikeComment = {
 	userId: string;
 	commentId: string;
+	postId: string;
 };
 
 export type IUnlikePost = {
@@ -16,6 +17,7 @@ export type IUnlikePost = {
 export type IUnlikeComment = {
 	commentId: string;
 	userId: string;
+	postId: string;
 };
 
 export type IGetPostLikes = {
