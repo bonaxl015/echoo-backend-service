@@ -50,18 +50,27 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
 };
 
 export const getPostByUserId = async (req: Request, res: Response, next: NextFunction) => {
-	const { pageNumber, pageSize } = req.query;
-	const { userId } = req as AuthenticatedRequest;
+	const { userId, pageNumber, pageSize } = req.query;
 
 	const pageNumberToInt = Number(pageNumber);
 	const pageSizeToInt = Number(pageSize);
 
+	const cacheKey = buildPageCacheKey(`posts:user:${userId}`, pageNumberToInt, pageSizeToInt);
+
 	try {
+		const cachedData = await getCache(cacheKey);
+
+		if (cachedData) {
+			return res.status(STATUS_CODE.SUCCESS).json(cachedData);
+		}
+
 		const result = await postService.getPostByUserId({
-			authorId: userId,
+			authorId: userId as string,
 			pageNumber: pageNumberToInt,
 			pageSize: pageSizeToInt
 		});
+
+		await setCache(cacheKey, result, POST_TTL);
 
 		res.status(STATUS_CODE.SUCCESS).json(result);
 	} catch (error) {
