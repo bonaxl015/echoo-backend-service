@@ -1,6 +1,7 @@
 import {
 	getAllPostSchema,
 	getPostByIdSchema,
+	getPostByUserSchema,
 	createPostSchema,
 	updatePostSchema,
 	deletePostSchema
@@ -67,7 +68,7 @@ export const getPostsByUserPath: RouteConfig = {
 	path: '/api/v1/post/get-by-user',
 	tags: ['Post'],
 	request: {
-		query: getAllPostSchema
+		query: getPostByUserSchema
 	},
 	responses: {
 		200: {

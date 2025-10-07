@@ -7,6 +7,7 @@ import {
 	deletePostSchema,
 	getAllPostSchema,
 	getPostByIdSchema,
+	getPostByUserSchema,
 	updatePostSchema
 } from './post.validation';
 import { ValidationProperty } from '../../enums/validationProperty';
@@ -37,7 +38,7 @@ router.get(
 router.get(
 	'/get-by-user',
 	authenticateUser,
-	validateRequest(getAllPostSchema, ValidationProperty.QUERY),
+	validateRequest(getPostByUserSchema, ValidationProperty.QUERY),
 	postController.getPostByUserId
 );
 
