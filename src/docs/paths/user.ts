@@ -2,7 +2,8 @@ import {
 	getUserSchema,
 	getUserByIdSchema,
 	updateUserSchema,
-	deleteUserSchema
+	deleteUserSchema,
+	uploadUserPhotoSchema
 } from '../../modules/user/user.validation';
 import { RouteConfig } from '@asteasolutions/zod-to-openapi';
 import {
@@ -100,6 +101,33 @@ export const updateUserProfilePath: RouteConfig = {
 		},
 		400: {
 			description: 'Failed to update user data',
+			content: {
+				'application/json': { schema: userErrorResponseSchema }
+			}
+		}
+	}
+};
+
+export const updateUserPhotoPath: RouteConfig = {
+	method: 'patch',
+	path: '/api/v1/user/profile/update/photo',
+	tags: ['User'],
+	request: {
+		body: {
+			content: {
+				'multipart/form-data': { schema: uploadUserPhotoSchema }
+			}
+		}
+	},
+	responses: {
+		200: {
+			description: 'Update user profile photo successfully',
+			content: {
+				'application/json': { schema: updateUserProfileResponseSchema }
+			}
+		},
+		400: {
+			description: 'Failed to update user profile photo',
 			content: {
 				'application/json': { schema: userErrorResponseSchema }
 			}

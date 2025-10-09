@@ -16,6 +16,7 @@ import {
 	getUserByIdPath,
 	getCurrentUserInfo,
 	updateUserProfilePath,
+	updateUserPhotoPath,
 	deleteUserPath,
 	getAllCommentPath,
 	createCommentPath,
@@ -49,6 +50,7 @@ registry.registerPath(getUsersPath);
 registry.registerPath(getUserByIdPath);
 registry.registerPath(getCurrentUserInfo);
 registry.registerPath(updateUserProfilePath);
+registry.registerPath(updateUserPhotoPath);
 registry.registerPath(deleteUserPath);
 
 // Post endpoint paths

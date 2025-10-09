@@ -49,3 +49,11 @@ export const deleteUserSchema = z
 		id: z.uuid('Invalid user id')
 	})
 	.openapi({ description: 'Delete own account' });
+
+export const uploadUserPhotoSchema = z.object({
+	photo: z.any().openapi({
+		type: 'string',
+		format: 'binary',
+		description: 'Image file to upload'
+	})
+});

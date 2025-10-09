@@ -4,6 +4,7 @@ export {
 	getUserByIdPath,
 	getCurrentUserInfo,
 	updateUserProfilePath,
+	updateUserPhotoPath,
 	deleteUserPath
 } from './user';
 export {
