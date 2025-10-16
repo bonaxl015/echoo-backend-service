@@ -27,6 +27,7 @@ export const likePost = async ({ userId, postId }: ILikePost) => {
 	}
 
 	await invalidatePaginationCache(`likes:posts:${postId}`, 3);
+	await invalidatePaginationCache(`posts:user:${userId}`, 3);
 	await invalidatePaginationCache('posts', 3);
 
 	return { like: true };
@@ -73,6 +74,7 @@ export const unlikePost = async ({ postId, userId }: IUnlikePost) => {
 	}
 
 	await invalidatePaginationCache(`likes:posts:${postId}`, 3);
+	await invalidatePaginationCache(`posts:user:${userId}`, 3);
 	await invalidatePaginationCache('posts', 3);
 
 	return { unlike: true };

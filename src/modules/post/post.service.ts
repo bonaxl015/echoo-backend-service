@@ -163,6 +163,7 @@ export const createPost = async ({ authorId, content }: ICreatePost) => {
 	}
 
 	await invalidatePaginationCache('posts', 3);
+	await invalidatePaginationCache(`posts:user:${authorId}`, 3);
 
 	return { post: postCreated };
 };
@@ -186,6 +187,7 @@ export const updatePost = async ({ id, authorId, content }: IUpdatePost) => {
 	}
 
 	await invalidatePaginationCache('posts', 3);
+	await invalidatePaginationCache(`posts:user:${authorId}`, 3);
 
 	return { post: updatedPost };
 };
@@ -208,6 +210,7 @@ export const deletePost = async ({ id, authorId }: IDeletePost) => {
 	}
 
 	await invalidatePaginationCache('posts', 3);
+	await invalidatePaginationCache(`posts:user:${authorId}`, 3);
 
 	return { deleted: true };
 };
