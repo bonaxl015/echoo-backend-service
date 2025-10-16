@@ -72,7 +72,9 @@ export const createComment = async ({ authorId, postId, content }: ICreateCommen
 		throw new Error('Filed to create comment');
 	}
 
+	await invalidatePaginationCache('posts', 3);
 	await invalidatePaginationCache(`comments:posts:${postId}`, 3);
+	await invalidatePaginationCache(`posts:user:${authorId}`, 3);
 
 	return { comment: createCommentResult };
 };
@@ -95,7 +97,9 @@ export const updateComment = async ({ authorId, id, content, postId }: IUpdateCo
 		throw new Error('Failed to update comment');
 	}
 
+	await invalidatePaginationCache('posts', 3);
 	await invalidatePaginationCache(`comments:posts:${postId}`, 3);
+	await invalidatePaginationCache(`posts:user:${authorId}`, 3);
 
 	return { comment: updateCommentResult };
 };
@@ -117,7 +121,9 @@ export const deleteComment = async ({ id, authorId, postId }: IDeleteComment) =>
 		throw new Error('Failed to delete comment');
 	}
 
+	await invalidatePaginationCache('posts', 3);
 	await invalidatePaginationCache(`comments:posts:${postId}`, 3);
+	await invalidatePaginationCache(`posts:user:${authorId}`, 3);
 
 	return { delete: true };
 };
